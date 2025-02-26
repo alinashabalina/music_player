@@ -1,0 +1,15 @@
+@use '../styles.scss' as s;
+
+
+.card-wrapper {
+  background-color: s.$silver;
+  width: 30vw;
+  height: 30vw;
+  border-radius: s.$card-radius;
+  box-shadow: s.$shadow 1vw 0 16px;
+
+  &:hover {
+    transform: rotate(10deg);
+    box-shadow: s.$onyx 2vw 0 16px;
+  }
+}
