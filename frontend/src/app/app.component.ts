@@ -1,14 +1,32 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import {ArtistCardComponent} from '../artist-card/artist-card.component';
+import { HTTPService } from './http.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ArtistCardComponent],
+  imports: [ArtistCardComponent],
   templateUrl: './app.component.html',
   standalone: true,
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
   title = 'frontend';
+  hello: string = ''
+  constructor(private httpService: HTTPService) {}
+
+  ngOnInit(): void {
+    const params = new URLSearchParams(document.location.search);
+    const code: string = params.get("code") as string
+    this.httpService.getToken(code).subscribe({
+      next: (data: any) => {
+        if (data.success === true) {
+          alert('successfully got token')
+        }
+      },
+      error: error => {
+        alert(error.error.message)
+      }})
+
+
+}
 }

@@ -3,8 +3,11 @@ require('dotenv').config()
 const express = require('express');
 const http = require('http');
 const {stringify} = require("node:querystring");
-
+const cors = require('cors');
+const {request} = require("express");
 const app = express();
+app.use(express.json());
+app.use(cors());
 const server = http.createServer(app);
 const clientId = process.env.API_ID;
 const clientSecret = process.env.API_SECRET;
@@ -17,7 +20,7 @@ server.listen(process.env.PORT, () => {
 });
 
 async function getAppToken() {
-    return await fetch("https://accounts.spotify.com/api/token", {
+    const app_token_response = await fetch("https://accounts.spotify.com/api/token", {
         method: "POST",
         body: new URLSearchParams({
             grant_type: process.env.API_GRANT,
@@ -28,10 +31,8 @@ async function getAppToken() {
             "Content-Type": "application/x-www-form-urlencoded"
         }
     })
-        .then((response) => response.json())
-        .then((data) => {
-            return data.access_token
-        })
+
+    return await app_token_response.json()
 }
 
 
@@ -47,25 +48,12 @@ function createString(length) {
     return result;
 }
 
-app.get('/login', function (req, res) {
-    const hru = 'https://accounts.spotify.com/authorize?' +
-        stringify({
-            response_type: 'code',
-            client_id: clientId,
-            scope: scope,
-            redirect_uri: redirect_uri,
-            state: state
-        });
-    console.log(hru)
-    res.redirect(hru)
-});
-
-async function getUserToken() {
-    return await fetch("https://accounts.spotify.com/api/token", {
+async function getUserToken(code) {
+    const response = await fetch("https://accounts.spotify.com/api/token", {
         method: "POST",
         body: new URLSearchParams({
             grant_type: process.env.USER_GRANT,
-            code: userCode,
+            code: code,
             redirect_uri: redirect_uri
         }),
         headers: {
@@ -73,8 +61,33 @@ async function getUserToken() {
             "Authorization": "Basic " + (new Buffer.from(clientId + ':' + clientSecret).toString('base64'))
         }
     })
-        .then((response) => response.json())
-        .then((data) => {
-            console.log(data)
-        })
+
+    return await response.json()
 }
+
+app.get('/login', function (req, res) {
+    res.redirect('https://accounts.spotify.com/authorize?' +
+        stringify({
+            response_type: 'code',
+            client_id: clientId,
+            scope: scope,
+            redirect_uri: redirect_uri,
+            state: state
+        }));
+
+});
+
+app.post('/token', async function (req, res) {
+    const code = req.body.code
+    const token = await getUserToken(code)
+    const options = {
+        maxAge: 1000 * 60 * 36,
+        httpOnly: true,
+        signed: false
+    }
+    res.status(200)
+    res.cookie('tokenCookie', token.access_token, options)
+    res.send({"success": true})
+});
+
+
