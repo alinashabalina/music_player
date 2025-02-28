@@ -4,30 +4,30 @@ const express = require('express');
 const http = require('http');
 const {stringify} = require("node:querystring");
 const cors = require('cors');
+const corsOptions = {
+    credentials: true,
+};
 const {request} = require("express");
 const app = express();
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 const server = http.createServer(app);
 const clientId = process.env.API_ID;
 const clientSecret = process.env.API_SECRET;
 const state = createString(16);
 const scope = process.env.SCOPE;
 const redirect_uri = process.env.REDIRECT;
-const userCode = ''
 server.listen(process.env.PORT, () => {
     console.log('server running');
 });
 
 async function getAppToken() {
     const app_token_response = await fetch("https://accounts.spotify.com/api/token", {
-        method: "POST",
-        body: new URLSearchParams({
-            grant_type: process.env.API_GRANT,
-            client_id: process.env.API_ID,
-            client_secret: process.env.API_SECRET
-        }),
-        headers: {
+        method: "POST", body: new URLSearchParams({
+            grant_type: process.env.API_GRANT, client_id: process.env.API_ID, client_secret: process.env.API_SECRET
+        }), headers: {
             "Content-Type": "application/x-www-form-urlencoded"
         }
     })
@@ -50,13 +50,9 @@ function createString(length) {
 
 async function getUserToken(code) {
     const response = await fetch("https://accounts.spotify.com/api/token", {
-        method: "POST",
-        body: new URLSearchParams({
-            grant_type: process.env.USER_GRANT,
-            code: code,
-            redirect_uri: redirect_uri
-        }),
-        headers: {
+        method: "POST", body: new URLSearchParams({
+            grant_type: process.env.USER_GRANT, code: code, redirect_uri: redirect_uri
+        }), headers: {
             "Content-Type": "application/x-www-form-urlencoded",
             "Authorization": "Basic " + (new Buffer.from(clientId + ':' + clientSecret).toString('base64'))
         }
@@ -66,14 +62,9 @@ async function getUserToken(code) {
 }
 
 app.get('/login', function (req, res) {
-    res.redirect('https://accounts.spotify.com/authorize?' +
-        stringify({
-            response_type: 'code',
-            client_id: clientId,
-            scope: scope,
-            redirect_uri: redirect_uri,
-            state: state
-        }));
+    res.redirect('https://accounts.spotify.com/authorize?' + stringify({
+        response_type: 'code', client_id: clientId, scope: scope, redirect_uri: redirect_uri, state: state
+    }));
 
 });
 
@@ -81,13 +72,15 @@ app.post('/token', async function (req, res) {
     const code = req.body.code
     const token = await getUserToken(code)
     const options = {
-        maxAge: 1000 * 60 * 36,
-        httpOnly: true,
-        signed: false
+        maxAge: 1000 * 60 * 36, httpOnly: true, secure: false, sameSite: 'none'
     }
-    res.status(200)
     res.cookie('tokenCookie', token.access_token, options)
-    res.send({"success": true})
+    res.status(200).send({"success": token.access_token})
 });
 
 
+// app.post('/check', function (req, res) {
+//     console.log(req.cookies)
+//     res.status(200)
+//     res.send({"success": true})
+// });

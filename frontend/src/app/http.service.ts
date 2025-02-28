@@ -10,4 +10,7 @@ export class HTTPService {
     const body = JSON.stringify({'code': code})
     return this.http.post(this.url + '/token', body, {headers: this.post_headers});
   }
+  // postCheck() {
+  //   return this.http.post(this.url + '/check', {}, {headers: this.post_headers});
+  // }
 }
