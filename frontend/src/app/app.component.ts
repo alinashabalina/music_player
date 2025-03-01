@@ -10,7 +10,7 @@ import {HTTPService} from './http.service';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'frontend';
+  title:string = 'frontend';
   constructor(private httpService: HTTPService) {}
 
   ngOnInit(): void {
@@ -19,24 +19,9 @@ export class AppComponent {
     this.httpService.getToken(code).subscribe(
     {
       next: (data: any) => {
-        // temporary solution for localhost debug: apparently localhost does not let set cookies?
-          document.cookie =  `token=${data.success}; expires=Thu, 13 Mar 2025 00:00:00 UTC; path=/;`;
           alert('successfully got token')
       },
       error: error => {
         alert(error.error.message)
       }})
-}
-
-// check() {
-//   this.httpService.postCheck().subscribe(
-//     {
-//       next: (data: any) => {
-//         alert('lala')
-//       },
-//       error: error => {
-//         alert('not lala')
-//       }})
-// }
-
-}
+}}

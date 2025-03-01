@@ -5,9 +5,9 @@ const http = require('http');
 const {stringify} = require("node:querystring");
 const cors = require('cors');
 const corsOptions = {
+    origin: process.env.FRONTEND_URL,
     credentials: true,
 };
-const {request} = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
@@ -72,15 +72,8 @@ app.post('/token', async function (req, res) {
     const code = req.body.code
     const token = await getUserToken(code)
     const options = {
-        maxAge: 1000 * 60 * 36, httpOnly: true, secure: false, sameSite: 'none'
+        maxAge: 1000 * 60 * 36, httpOnly: true
     }
     res.cookie('tokenCookie', token.access_token, options)
-    res.status(200).send({"success": token.access_token})
+    res.status(204).send({})
 });
-
-
-// app.post('/check', function (req, res) {
-//     console.log(req.cookies)
-//     res.status(200)
-//     res.send({"success": true})
-// });
