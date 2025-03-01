@@ -10,18 +10,36 @@ import {HTTPService} from './http.service';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title:string = 'frontend';
-  constructor(private httpService: HTTPService) {}
+  title: string = 'frontend';
+  name: string = ''
+
+  constructor(private httpService: HTTPService) {
+  }
 
   ngOnInit(): void {
     const params = new URLSearchParams(document.location.search);
     const code: string = params.get("code") as string
     this.httpService.getToken(code).subscribe(
-    {
-      next: (data: any) => {
-          alert('successfully got token')
-      },
-      error: error => {
-        alert(error.error.message)
-      }})
-}}
+      {
+        next: (data: any) => {
+        },
+        error: error => {
+          alert(error.error.message)
+        }
+      })
+  }
+
+  getProfile() {
+    this.httpService.getUser().subscribe(
+      {
+        next: (data: any) => {
+          this.name = data.user
+        },
+        error: () => {
+          console.log('oops')
+        }
+      })
+  }
+
+
+}

@@ -19,9 +19,7 @@ const clientSecret = process.env.API_SECRET;
 const state = createString(16);
 const scope = process.env.SCOPE;
 const redirect_uri = process.env.REDIRECT;
-server.listen(process.env.PORT, () => {
-    console.log('server running');
-});
+server.listen(process.env.PORT, () => {});
 
 async function getAppToken() {
     const app_token_response = await fetch("https://accounts.spotify.com/api/token", {
@@ -61,6 +59,17 @@ async function getUserToken(code) {
     return await response.json()
 }
 
+
+async function getUserInfo(token_cookie) {
+    const response = await fetch("https://api.spotify.com/v1/me", {
+        method: "GET", headers: {
+            "Authorization": "Bearer " + token_cookie
+        }
+    })
+
+    return await response.json()
+}
+
 app.get('/login', function (req, res) {
     res.redirect('https://accounts.spotify.com/authorize?' + stringify({
         response_type: 'code', client_id: clientId, scope: scope, redirect_uri: redirect_uri, state: state
@@ -76,4 +85,11 @@ app.post('/token', async function (req, res) {
     }
     res.cookie('tokenCookie', token.access_token, options)
     res.status(204).send({})
+});
+
+
+app.post('/me', async function (req, res) {
+    const token_cookie = req.cookies.tokenCookie
+    const data = await getUserInfo(token_cookie)
+    res.status(200).send({'user': data.display_name, 'id': data.id, 'country': data.country})
 });
