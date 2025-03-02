@@ -1,0 +1,34 @@
+@use '../styles.scss' as s;
+
+$wrapper-width-769: 40vw;
+$avatar-width-769: 15vw;
+
+@media (min-width: 769px) {
+  .card-wrapper {
+    width: $wrapper-width-769;
+    height: 99vh;
+    background: s.$light-navy linear-gradient(s.$lighter-navy, s.$light-navy);
+    overflow-y: hidden;
+    position: relative;
+  }
+
+  .card-avatar {
+    position: absolute;
+    top: 5vw;
+    left: ($wrapper-width-769 - $avatar-width-769) / 2;
+    width: $avatar-width-769;
+    height: 15vw;
+    background: linear-gradient(s.$av-light, s.$av-dark);
+    border-radius: 50%;
+  }
+
+  .card-item {
+    margin-top: 10vh;
+    width: $wrapper-width-769 - 10vw;
+    height: 5vh;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  //  how to make each item be absolute to the wrapper and not be on the same line?
+  }
+}

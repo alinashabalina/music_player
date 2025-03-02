@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {HTTPService} from '../services/http.service';
+import {NgForOf} from '@angular/common';
 
 interface profileData {
   user: string,
@@ -9,7 +10,9 @@ interface profileData {
 
 @Component({
   selector: 'app-user-card',
-  imports: [],
+  imports: [
+    NgForOf
+  ],
   templateUrl: './user-card.component.html',
   standalone: true,
   styleUrl: './user-card.component.scss'
@@ -17,14 +20,14 @@ interface profileData {
 
 
 export class UserCardComponent {
-  name: string = ''
+  dataItems: string[] | [] = []
 
   constructor(private httpService: HTTPService) {}
 
   getProfile() {
     this.httpService.getUser().subscribe({
       next: (data: any) => {
-        this.name = data.user
+        this.dataItems = Object.values(data)
       }, error: error => {
         console.log(error.error.message)
       }
@@ -35,9 +38,9 @@ export class UserCardComponent {
     const params = new URLSearchParams(document.location.search);
     const code: string = params.get("code") as string
     this.httpService.getToken(code).subscribe({
-        next: (data: any) => {
+        next: () => {
           this.getProfile()
-          window.history.pushState(null, 'samePage', '/');
+          // window.history.pushState(null, 'samePage', '/');
         }, error: error => {
           alert(error.error.message)
         }
