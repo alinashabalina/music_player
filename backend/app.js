@@ -5,8 +5,7 @@ const http = require('http');
 const {stringify} = require("node:querystring");
 const cors = require('cors');
 const corsOptions = {
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
+    origin: process.env.FRONTEND_URL, credentials: true,
 };
 const app = express();
 const cookieParser = require("cookie-parser");
@@ -19,7 +18,8 @@ const clientSecret = process.env.API_SECRET;
 const state = createString(16);
 const scope = process.env.SCOPE;
 const redirect_uri = process.env.REDIRECT;
-server.listen(process.env.PORT, () => {});
+server.listen(process.env.PORT, () => {
+});
 
 async function getAppToken() {
     const app_token_response = await fetch("https://accounts.spotify.com/api/token", {
@@ -70,6 +70,14 @@ async function getUserInfo(token_cookie) {
     return await response.json()
 }
 
+function sendToken(res, token) {
+    const options = {
+        maxAge: 1000 * 60 * 36, httpOnly: true
+    }
+    res.cookie('tokenCookie', token, options)
+    res.status(204).send({})
+}
+
 app.get('/login', function (req, res) {
     res.redirect('https://accounts.spotify.com/authorize?' + stringify({
         response_type: 'code', client_id: clientId, scope: scope, redirect_uri: redirect_uri, state: state
@@ -78,13 +86,16 @@ app.get('/login', function (req, res) {
 });
 
 app.post('/token', async function (req, res) {
-    const code = req.body.code
-    const token = await getUserToken(code)
-    const options = {
-        maxAge: 1000 * 60 * 36, httpOnly: true
+    if (req.cookies.length === 0 || req.cookies.tokenCookie === undefined)
+    {
+        const code = req.body.code
+        const token = await getUserToken(code)
+        sendToken(res, token)
     }
-    res.cookie('tokenCookie', token.access_token, options)
-    res.status(204).send({})
+    else {
+        sendToken(res, req.cookies.tokenCookie)
+    }
+
 });
 
 

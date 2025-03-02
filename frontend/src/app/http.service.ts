@@ -7,7 +7,7 @@ export class HTTPService {
   private options = {headers: {'Content-Type': 'application/json'}, withCredentials: true}
   constructor(private http: HttpClient) {}
   getToken(code: string) {
-    const body = JSON.stringify({'code': code})
+    const body: string = JSON.stringify({'code': code})
     return this.http.post(this.url + '/token', body, this.options);
   }
 

@@ -2,6 +2,14 @@ import {Component} from '@angular/core';
 import {ArtistCardComponent} from '../artist-card/artist-card.component';
 import {HTTPService} from './http.service';
 
+interface profileData {
+  user?: string,
+  id?: string,
+  country?: string
+}
+
+type dataData = string | undefined;
+
 @Component({
   selector: 'app-root',
   imports: [ArtistCardComponent],
@@ -11,35 +19,34 @@ import {HTTPService} from './http.service';
 })
 export class AppComponent {
   title: string = 'frontend';
-  name: string = ''
+  name: dataData = ''
+  id: dataData = ''
 
   constructor(private httpService: HTTPService) {
+  }
+
+  getProfile() {
+    this.httpService.getUser().subscribe({
+      next: (data: profileData) => {
+        this.name = data.user
+      }, error: error => {
+        console.log(error.error.message)
+      }
+    })
   }
 
   ngOnInit(): void {
     const params = new URLSearchParams(document.location.search);
     const code: string = params.get("code") as string
-    this.httpService.getToken(code).subscribe(
-      {
-        next: (data: any) => {
-        },
-        error: error => {
-          alert(error.error.message)
-        }
-      })
+    this.httpService.getToken(code).subscribe({
+      next: (data: any) => {
+        this.getProfile()
+      }, error: error => {
+        alert(error.error.message)
+      }
+    })
   }
 
-  getProfile() {
-    this.httpService.getUser().subscribe(
-      {
-        next: (data: any) => {
-          this.name = data.user
-        },
-        error: () => {
-          console.log('oops')
-        }
-      })
-  }
 
 
 }
