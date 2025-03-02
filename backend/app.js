@@ -86,16 +86,13 @@ app.get('/login', function (req, res) {
 });
 
 app.post('/token', async function (req, res) {
-    if (req.cookies.length === 0 || req.cookies.tokenCookie === undefined)
-    {
+    if (req.cookies.length === 0 || req.cookies.tokenCookie === undefined) {
         const code = req.body.code
         const token = await getUserToken(code)
-        sendToken(res, token)
-    }
-    else {
+        sendToken(res, token.access_token)
+    } else {
         sendToken(res, req.cookies.tokenCookie)
     }
-
 });
 
 
