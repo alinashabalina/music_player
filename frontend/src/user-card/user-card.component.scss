@@ -22,13 +22,19 @@ $avatar-width-769: 15vw;
     border-radius: 50%;
   }
 
+  .data-wrapper {
+    position: absolute;
+    top: 20vh;
+    width: $wrapper-width-769 - 10vw;
+    margin-left: 0.3 * $avatar-width-769;
+  }
+
   .card-item {
     margin-top: 10vh;
-    width: $wrapper-width-769 - 10vw;
     height: 5vh;
     text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-  //  how to make each item be absolute to the wrapper and not be on the same line?
+    background: s.$lighter-navy;
+    border-radius: 1vw;
+    font-size: 4vh;
   }
 }

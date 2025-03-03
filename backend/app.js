@@ -86,6 +86,8 @@ app.get('/login', function (req, res) {
 });
 
 app.post('/token', async function (req, res) {
+    // there is probably a bug here: if there is a token in the cookies and it's undefined
+    // the token will not be refreshed: explore why
     if (req.cookies.length === 0 || req.cookies.tokenCookie === undefined) {
         const code = req.body.code
         const token = await getUserToken(code)
