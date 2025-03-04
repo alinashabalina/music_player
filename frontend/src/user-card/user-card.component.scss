@@ -3,7 +3,7 @@
 $wrapper-width-769: 40vw;
 $avatar-width-769: 15vw;
 
-@media (min-width: 769px) {
+@media (min-width: 667px) {
   .card-wrapper {
     width: $wrapper-width-769;
     height: 99vh;
@@ -15,7 +15,7 @@ $avatar-width-769: 15vw;
   .card-avatar {
     position: absolute;
     top: 5vw;
-    left: ($wrapper-width-769 - $avatar-width-769) / 2;
+    left:  calc(($wrapper-width-769 - $avatar-width-769) / 2);
     width: $avatar-width-769;
     height: 15vw;
     background: linear-gradient(s.$av-light, s.$av-dark);
@@ -24,17 +24,18 @@ $avatar-width-769: 15vw;
 
   .data-wrapper {
     position: absolute;
-    top: 20vh;
-    width: $wrapper-width-769 - 10vw;
+    top: 45vh;
+    width: calc($wrapper-width-769 - 10vw);
     margin-left: 0.3 * $avatar-width-769;
   }
 
   .card-item {
     margin-top: 10vh;
-    height: 5vh;
+    height: 7vh;
     text-align: center;
+    line-height: 7vh;
     background: s.$lighter-navy;
     border-radius: 1vw;
-    font-size: 4vh;
+    font-size: 3vh;
   }
 }
