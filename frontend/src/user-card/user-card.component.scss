@@ -1,41 +1,76 @@
 @use '../styles.scss' as s;
 
-$wrapper-width-769: 40vw;
-$avatar-width-769: 15vw;
+$wrapper-width-667: 40vw;
+$wrapper-width-1024: 45vw;
+$avatar-width-667: 15vw;
+$avatar-width-1024: 20vw;
+
+.card-wrapper {
+  height: 99vh;
+  background: s.$light-navy linear-gradient(s.$lighter-navy, s.$light-navy);
+  overflow-y: hidden;
+  position: relative;
+}
+
+.card-avatar {
+  position: absolute;
+  top: 5vw;
+  background: linear-gradient(s.$av-light, s.$av-dark);
+  border-radius: 50%;
+}
+
+.data-wrapper {
+  position: absolute;
+  top: 45vh;
+}
+
+.card-item {
+  margin-top: 10vh;
+  height: 5vh;
+  text-align: center;
+  line-height: 5vh;
+  background: s.$lighter-navy;
+  border-radius: 1vw;
+}
 
 @media (min-width: 667px) {
   .card-wrapper {
-    width: $wrapper-width-769;
-    height: 99vh;
-    background: s.$light-navy linear-gradient(s.$lighter-navy, s.$light-navy);
-    overflow-y: hidden;
-    position: relative;
+    width: $wrapper-width-667;
   }
-
   .card-avatar {
-    position: absolute;
-    top: 5vw;
-    left:  calc(($wrapper-width-769 - $avatar-width-769) / 2);
-    width: $avatar-width-769;
-    height: 15vw;
-    background: linear-gradient(s.$av-light, s.$av-dark);
-    border-radius: 50%;
+    height: $avatar-width-667;
+    left: calc(($wrapper-width-667 - $avatar-width-667) / 2);
+    width: $avatar-width-667;
   }
-
   .data-wrapper {
-    position: absolute;
-    top: 45vh;
-    width: calc($wrapper-width-769 - 10vw);
-    margin-left: 0.3 * $avatar-width-769;
+    width: calc($wrapper-width-667 - 10vw);
+    margin-left: 0.3 * $avatar-width-667;
   }
-
   .card-item {
-    margin-top: 10vh;
-    height: 7vh;
-    text-align: center;
-    line-height: 7vh;
-    background: s.$lighter-navy;
-    border-radius: 1vw;
-    font-size: 3vh;
+    font-size: 2vh;
+  }
+}
+
+@media (min-width: 1024px) {
+  .card-wrapper {
+    width: $wrapper-width-1024;
+  }
+  .card-avatar {
+    left: calc(($wrapper-width-1024 - $avatar-width-1024) / 2);
+    width: $avatar-width-1024;
+    height: $avatar-width-1024;
+  }
+  .data-wrapper {
+    width: calc($wrapper-width-1024 - 12vw);
+    margin-left: 0.3 * $avatar-width-1024;
+  }
+  .card-item {
+    font-size: 2vh;
+  }
+}
+
+@media (min-width: 1238px) {
+  .card-item {
+    font-size: 4vh;
   }
 }
